@@ -3,3 +3,6 @@
 __pycache__/
 out/src/runs/*
 *.swp
+runs/
+results/
+data_all/
