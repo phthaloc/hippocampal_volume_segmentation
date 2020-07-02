@@ -4,30 +4,35 @@ Module loads the hippocampus dataset into RAM
 import os
 from os import listdir
 from os.path import isfile, join
-
 import numpy as np
 from medpy.io import load
-
 from utils.utils import med_reshape
 
-def LoadHippocampusData(root_dir, y_shape, z_shape):
+def LoadHippocampusData(root_dir: str, y_shape: int, z_shape: int):
     '''
     This function loads our dataset form disk into memory,
     reshaping output to common size
 
     Arguments:
         volume {Numpy array} -- 3D array representing the volume
+        root_dir {str} -- 
+        y_shape {int} -- 
+        z_shape {int} -- 
 
     Returns:
-        Array of dictionaries with data stored in seg and image fields as 
+        List of dictionaries with data stored in seg and image fields as 
         Numpy arrays of shape [AXIAL_WIDTH, Y_SHAPE, Z_SHAPE]
     '''
-
+    ## define image and label directories:
     image_dir = os.path.join(root_dir, 'images')
     label_dir = os.path.join(root_dir, 'labels')
 
-    images = [f for f in listdir(image_dir) if (
-        isfile(join(image_dir, f)) and f[0] != ".")]
+    ## create list that contains all filenames:
+    images = [
+        f for f in listdir(image_dir) if (
+            isfile(join(image_dir, f)) and f[0]!="."
+        )
+    ]
 
     out = []
     for f in images:

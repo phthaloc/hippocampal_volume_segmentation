@@ -12,6 +12,16 @@ class Config:
     Holds configuration parameters
     """
     def __init__(self):
+        """
+        Defines important parameters:
+        name: name of algorithm (neural network)
+        root_dir: 
+        n_epochs: number of epochs to train
+        learning_rate: initial learning rate
+        batch_size: size of image/label batches to feed the neural network at training at once
+        patch_size:
+        test_results_dir: 
+        """
         self.name = "Basic_unet"
         self.root_dir = r"YOUR DIRECTORY HERE"
         self.n_epochs = 10
