@@ -97,3 +97,4 @@ if __name__ == "__main__":
     with open(os.path.join(exp.out_dir, 'results.json'), 'w') as out_file:
         json.dump(results_json, out_file, indent=2, separators=(',', ': '))
 
+    print('To see results run: tensorboard --port=6006 --logdir runs --bind_all.')
