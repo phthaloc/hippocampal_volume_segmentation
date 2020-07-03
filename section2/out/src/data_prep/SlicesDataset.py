@@ -57,9 +57,6 @@ class SlicesDataset(Dataset):
         ## select a slice of the label in the y, z plane and add a dimension in front ([None, :]):
         seg_slice = self.data[slc[0]]['seg'][slc[1]][None, :]
         sample['seg'] = torch.from_numpy(seg_slice)#.long().cuda()
-        ## alternatively:
-        #sample['image'] = torch.from_numpy(self.data[slc[0]]['image'][slc[1]]).type(torch.cuda.FloatTensor).unsqueeze(0)
-        #sample['seg'] = torch.from_numpy(self.data[slc[0]]['seg'][slc[1]]).type(torch.cuda.FloatTensor).unsqueeze(0)
         return sample
 
     def __len__(self):

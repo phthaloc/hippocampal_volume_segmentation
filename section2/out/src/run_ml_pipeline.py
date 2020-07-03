@@ -24,7 +24,7 @@ class Config:
         """
         self.name = 'Basic_unet'
         self.root_dir = r'../data/TrainingSet/'
-        self.n_epochs = 10
+        self.n_epochs = 1
         self.learning_rate = 0.0002
         self.batch_size = 8
         self.patch_size = 64

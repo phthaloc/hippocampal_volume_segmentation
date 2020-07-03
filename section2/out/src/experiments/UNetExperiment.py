@@ -61,6 +61,13 @@ class UNetExperiment:
             print('WARNING: No CUDA device is found. This may take significantly longer!')
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+        ## initilize model:
+        ## last layer of the UNet model is a convolution layer without activation function.
+        ## we will use a Cross entropy loss. This loss function will apply a softmax
+        ## activation function to scale entries between [0, 1]. We output 3 freature 
+        ## maps (channels) because we have 3 classes to predict. The target varible can contain
+        ## pixel intensities {0, 1, 2} which represent the three classes. The
+        ## target is a 1 channel image.
         # Configure our model and other training implements
         # We will use a recursive UNet model from German Cancer Research Center, 
         # Division of Medical Image Computing. It is quite complicated and works 
@@ -68,6 +75,7 @@ class UNetExperiment:
         self.model = UNet(num_classes=3)
         self.model.to(self.device)
         ## print model architcture:
+        print(self.model)
         print(torchsummary.summary(self.model, input_size=(1, config.patch_size, config.patch_size)))
 
         # We are using a standard cross-entropy loss since the model output is essentially
@@ -113,9 +121,12 @@ class UNetExperiment:
 
             # TASK: What does each dimension of variable prediction represent?
             # ANSWER:
-            ## 0th dimension: 
-            ## 1st dimension:
-            ## 2nd dimension:
+            ## 0th dimension: batch size
+            ## 1st dimension: channels (channels 0: probability for being background,
+            ##   channel 1: probability for beeing anterior hippocampus (class1),
+            ##   channel 2: probability for beeing posterior hippocampus (class 2)
+            ## 2nd dimension: spatial coordinate
+            ## 3nd dimension: spatial coordinate
 
             loss.backward()
             self.optimizer.step()
@@ -159,7 +170,6 @@ class UNetExperiment:
             for i, batch in enumerate(self.val_loader):
                 
                 # TASK: Write validation code that will compute loss on a validation sample
-                # <YOUR CODE HERE>
                 data = batch['image'].to(self.device, dtype=torch.float)
                 target = batch['seg'].to(self.device)
 
@@ -225,7 +235,7 @@ class UNetExperiment:
         # TASK: Inference Agent is not complete. Go and finish it. Feel free to test the class
         # in a module of your own by running it against one of the data samples
         inference_agent = UNetInferenceAgent(model=self.model, device=self.device,
-                                             parameter_file_path='', device='cpu', patch_size=64)
+                                             parameter_file_path='', patch_size=64)
 
         out_dict = {}
         out_dict['volume_stats'] = []
@@ -262,12 +272,13 @@ class UNetExperiment:
                 'dice': dc,
                 'jaccard': jc
                 })
-            print(f"{x['filename']} Dice {dc:.4f}. {100*(i+1)/len(self.test_data):.2f}% complete")
+            print(f"{x['filename']} Dice {dc:.4f}, Jaccard {jc:.4f}. {100*(i+1)/len(self.test_data):.2f}% complete")
 
         out_dict['overall'] = {
             'mean_dice': np.mean(dc_list),
             'mean_jaccard': np.mean(jc_list)}
-
+        
+        print(f"mean Dice: {np.mean(dc_list):.4f}, mean Jaccard {np.mean(jc_list):.4f}.")
         print('\nTesting complete.')
         return out_dict
 
