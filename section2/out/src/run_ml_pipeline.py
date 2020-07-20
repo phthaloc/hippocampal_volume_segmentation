@@ -24,7 +24,7 @@ class Config:
         """
         self.name = 'Basic_unet'
         self.root_dir = r'../data/TrainingSet/'
-        self.n_epochs = 1
+        self.n_epochs = 200
         self.learning_rate = 0.0002
         self.batch_size = 8
         self.patch_size = 64
@@ -36,8 +36,8 @@ if __name__ == "__main__":
     np.random.seed(seed=5)
 
     # define relative training, validation and testing size:
-    train_size = 0.8
-    valid_size = 0.1
+    train_size = 0.75
+    valid_size = 0.15
     test_size = 0.1
 
     # Get configuration
