@@ -23,7 +23,8 @@ class Config:
         test_results_dir: 
         """
         self.name = 'Basic_unet'
-        self.root_dir = r'../data/TrainingSet/'
+        # self.root_dir = r'../data/TrainingSet/'
+        self.root_dir = r'../../section1/data/TrainingSet/'
         self.n_epochs = 10
         self.learning_rate = 0.0002
         self.batch_size = 16
