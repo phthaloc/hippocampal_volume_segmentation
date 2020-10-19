@@ -3,7 +3,7 @@ This file contains code that will kick off training and testing processes
 """
 import os
 import json
-
+import numpy as np
 from experiments.UNetExperiment import UNetExperiment
 from data_prep.HippocampusDatasetLoader import LoadHippocampusData
 
@@ -22,15 +22,24 @@ class Config:
         patch_size:
         test_results_dir: 
         """
-        self.name = "Basic_unet"
-        self.root_dir = r"YOUR DIRECTORY HERE"
+        self.name = 'Basic_unet'
+        self.root_dir = r'../data/TrainingSet/'
         self.n_epochs = 10
         self.learning_rate = 0.0002
-        self.batch_size = 8
+        self.batch_size = 16
         self.patch_size = 64
-        self.test_results_dir = "RESULTS GO HERE"
+        self.test_results_dir = '../results/'
 
 if __name__ == "__main__":
+
+    # set random seed generator:
+    np.random.seed(seed=5)
+
+    # define relative training, validation and testing size:
+    train_size = 0.75
+    valid_size = 0.15
+    test_size = 0.1
+
     # Get configuration
 
     # TASK: Fill in parameters of the Config class and specify directory where the data is stored and 
@@ -41,7 +50,8 @@ if __name__ == "__main__":
     print("Loading data...")
 
     # TASK: LoadHippocampusData is not complete. Go to the implementation and complete it. 
-    data = LoadHippocampusData(c.root_dir, y_shape = c.patch_size, z_shape = c.patch_size)
+    data = LoadHippocampusData(root_dir=c.root_dir, y_shape=c.patch_size,
+                               z_shape=c.patch_size)
 
 
     # Create test-train-val split
@@ -52,6 +62,8 @@ if __name__ == "__main__":
 
     # Here, random permutation of keys array would be useful in case if we do something like 
     # a k-fold training and combining the results. 
+    keys = np.array(keys)
+    np.random.shuffle(keys)
 
     split = dict()
 
@@ -59,11 +71,14 @@ if __name__ == "__main__":
     # the array with indices of training volumes to be used for training, validation 
     # and testing respectively.
     # <YOUR CODE GOES HERE>
+    split['train'] = keys[:int(train_size*len(keys))]
+    split['val'] = keys[int(train_size*len(keys)):int((train_size+valid_size)*len(keys))]
+    split['test'] = keys[int((train_size+valid_size)*len(keys)):]
 
     # Set up and run experiment
     
     # TASK: Class UNetExperiment has missing pieces. Go to the file and fill them in
-    exp = UNetExperiment(c, split, data)
+    exp = UNetExperiment(config=c, split=split, dataset=data)
 
     # You could free up memory by deleting the dataset
     # as it has been copied into loaders
@@ -79,6 +94,7 @@ if __name__ == "__main__":
 
     results_json["config"] = vars(c)
 
-    with open(os.path.join(exp.out_dir, "results.json"), 'w') as out_file:
+    with open(os.path.join(exp.out_dir, 'results.json'), 'w') as out_file:
         json.dump(results_json, out_file, indent=2, separators=(',', ': '))
 
+    print('To see results run: tensorboard --port=6006 --logdir runs --bind_all.')

@@ -12,6 +12,7 @@ import torch.nn.functional as F
 
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
+import torchsummary
 
 from data_prep.SlicesDataset import SlicesDataset
 from utils.utils import log_to_tensorboard
@@ -33,8 +34,8 @@ class UNetExperiment:
     def __init__(self, config, split, dataset):
         self.n_epochs = config.n_epochs
         self.split = split
-        self._time_start = ""
-        self._time_end = ""
+        self._time_start = ''
+        self._time_end = ''
         self.epoch = 0
         self.name = config.name
 
@@ -47,25 +48,35 @@ class UNetExperiment:
         # TASK: SlicesDataset class is not complete. Go to the file and complete it. 
         # Note that we are using a 2D version of UNet here, which means that it will expect
         # batches of 2D slices.
-        self.train_loader = DataLoader(SlicesDataset(dataset[split["train"]]),
+        self.train_loader = DataLoader(SlicesDataset(dataset[split['train']]),
                 batch_size=config.batch_size, shuffle=True, num_workers=0)
-        self.val_loader = DataLoader(SlicesDataset(dataset[split["val"]]),
+        self.val_loader = DataLoader(SlicesDataset(dataset[split['val']]),
                 batch_size=config.batch_size, shuffle=True, num_workers=0)
 
         # we will access volumes directly for testing
-        self.test_data = dataset[split["test"]]
+        self.test_data = dataset[split['test']]
 
         # Do we have CUDA available?
         if not torch.cuda.is_available():
-            print("WARNING: No CUDA device is found. This may take significantly longer!")
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            print('WARNING: No CUDA device is found. This may take significantly longer!')
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+        ## initilize model:
+        ## last layer of the UNet model is a convolution layer without activation function.
+        ## we will use a Cross entropy loss. This loss function will apply a softmax
+        ## activation function to scale entries between [0, 1]. We output 3 freature 
+        ## maps (channels) because we have 3 classes to predict. The target varible can contain
+        ## pixel intensities {0, 1, 2} which represent the three classes. The
+        ## target is a 1 channel image.
         # Configure our model and other training implements
         # We will use a recursive UNet model from German Cancer Research Center, 
         # Division of Medical Image Computing. It is quite complicated and works 
         # very well on this task. Feel free to explore it or plug in your own model
         self.model = UNet(num_classes=3)
         self.model.to(self.device)
+        ## print model architcture:
+        print(self.model)
+        print(torchsummary.summary(self.model, input_size=(1, config.patch_size, config.patch_size)))
 
         # We are using a standard cross-entropy loss since the model output is essentially
         # a tensor with softmax'd prediction of each pixel's probability of belonging 
@@ -97,8 +108,8 @@ class UNetExperiment:
             # shape [BATCH_SIZE, 1, PATCH_SIZE, PATCH_SIZE] into variables data and target. 
             # Feed data to the model and feed target to the loss function
             # 
-            # data = <YOUR CODE HERE>
-            # target = <YOUR CODE HERE>
+            data = batch['image'].to(self.device, dtype=torch.float)
+            target = batch['seg'].to(self.device)
 
             prediction = self.model(data)
 
@@ -110,6 +121,12 @@ class UNetExperiment:
 
             # TASK: What does each dimension of variable prediction represent?
             # ANSWER:
+            ## 0th dimension: batch size
+            ## 1st dimension: channels (channels 0: probability for being background,
+            ##   channel 1: probability for beeing anterior hippocampus (class1),
+            ##   channel 2: probability for beeing posterior hippocampus (class 2)
+            ## 2nd dimension: spatial coordinate
+            ## 3nd dimension: spatial coordinate
 
             loss.backward()
             self.optimizer.step()
@@ -153,7 +170,12 @@ class UNetExperiment:
             for i, batch in enumerate(self.val_loader):
                 
                 # TASK: Write validation code that will compute loss on a validation sample
-                # <YOUR CODE HERE>
+                data = batch['image'].to(self.device, dtype=torch.float)
+                target = batch['seg'].to(self.device)
+
+                prediction = self.model(data)
+                prediction_softmax = F.softmax(prediction, dim=1)
+                loss = self.loss_function(prediction, target[:, 0, :, :])
 
                 print(f"Batch {i}. Data shape {data.shape} Loss {loss}")
 
@@ -212,16 +234,17 @@ class UNetExperiment:
 
         # TASK: Inference Agent is not complete. Go and finish it. Feel free to test the class
         # in a module of your own by running it against one of the data samples
-        inference_agent = UNetInferenceAgent(model=self.model, device=self.device)
+        inference_agent = UNetInferenceAgent(model=self.model, device=self.device,
+                                             parameter_file_path='', patch_size=64)
 
         out_dict = {}
-        out_dict["volume_stats"] = []
+        out_dict['volume_stats'] = []
         dc_list = []
         jc_list = []
 
         # for every in test set
         for i, x in enumerate(self.test_data):
-            pred_label = inference_agent.single_volume_inference(x["image"])
+            pred_label = inference_agent.single_volume_inference(x['image'])
 
             # We compute and report Dice and Jaccard similarity coefficients which 
             # assess how close our volumes are to each other
@@ -233,8 +256,8 @@ class UNetExperiment:
             # correctly (and if you picked your train/val/test split right ;)),
             # your average Jaccard on your test set should be around 0.80
 
-            dc = Dice3d(pred_label, x["seg"])
-            jc = Jaccard3d(pred_label, x["seg"])
+            dc = Dice3d(pred_label, x['seg'])
+            jc = Jaccard3d(pred_label, x['seg'])
             dc_list.append(dc)
             jc_list.append(jc)
 
@@ -244,18 +267,19 @@ class UNetExperiment:
             # * Dice-per-slice and render combined slices with lowest and highest DpS
             # * Dice per class (anterior/posterior)
 
-            out_dict["volume_stats"].append({
-                "filename": x['filename'],
-                "dice": dc,
-                "jaccard": jc
+            out_dict['volume_stats'].append({
+                'filename': x['filename'],
+                'dice': dc,
+                'jaccard': jc
                 })
-            print(f"{x['filename']} Dice {dc:.4f}. {100*(i+1)/len(self.test_data):.2f}% complete")
+            print(f"{x['filename']} Dice {dc:.4f}, Jaccard {jc:.4f}. {100*(i+1)/len(self.test_data):.2f}% complete")
 
-        out_dict["overall"] = {
-            "mean_dice": np.mean(dc_list),
-            "mean_jaccard": np.mean(jc_list)}
-
-        print("\nTesting complete.")
+        out_dict['overall'] = {
+            'mean_dice': np.mean(dc_list),
+            'mean_jaccard': np.mean(jc_list)}
+        
+        print(f"mean Dice: {np.mean(dc_list):.4f}, mean Jaccard {np.mean(jc_list):.4f}.")
+        print('\nTesting complete.')
         return out_dict
 
     def run(self):
@@ -264,7 +288,7 @@ class UNetExperiment:
         """
         self._time_start = time.time()
 
-        print("Experiment started.")
+        print('Experiment started.')
 
         # Iterate over epochs
         for self.epoch in range(self.n_epochs):

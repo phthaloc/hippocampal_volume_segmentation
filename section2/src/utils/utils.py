@@ -58,16 +58,17 @@ def log_to_tensorboard(writer, loss, data, target, prediction_softmax, predictio
         prediction {tensor} -- raw prediction (to be used in argmax)
         counter {int} -- batch and epoch counter
     """
-    writer.add_scalar("Loss",\
+    writer.add_scalar('Loss',\
                     loss, counter)
-    writer.add_figure("Image Data",\
+    writer.add_figure('Image Data',\
         mpl_image_grid(data.float().cpu()), global_step=counter)
-    writer.add_figure("Mask",\
+    writer.add_figure('Mask',\
         mpl_image_grid(target.float().cpu()), global_step=counter)
-    writer.add_figure("Probability map",\
+    writer.add_figure('Probability map',\
         mpl_image_grid(prediction_softmax.cpu()), global_step=counter)
-    writer.add_figure("Prediction",\
+    writer.add_figure('Prediction',\
         mpl_image_grid(torch.argmax(prediction.cpu(), dim=1, keepdim=True)), global_step=counter)
+
 
 def save_numpy_as_image(arr, path):
     """
@@ -77,8 +78,9 @@ def save_numpy_as_image(arr, path):
         arr {array} -- 2D array of pixels
         path {string} -- path to file
     """
-    plt.imshow(arr, cmap="gray") #Needs to be in row,col order
+    plt.imshow(arr, cmap='gray') #Needs to be in row,col order
     plt.savefig(path)
+
 
 def med_reshape(image, new_shape):
     """
@@ -96,6 +98,6 @@ def med_reshape(image, new_shape):
     reshaped_image = np.zeros(new_shape)
 
     # TASK: write your original image into the reshaped image
-    # <CODE GOES HERE>
+    reshaped_image[0:image.shape[0], 0:image.shape[1], 0:image.shape[2]] = image
 
     return reshaped_image

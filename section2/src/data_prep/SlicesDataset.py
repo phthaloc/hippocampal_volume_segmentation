@@ -12,11 +12,12 @@ class SlicesDataset(Dataset):
     """
     def __init__(self, data):
         self.data = data
-
+        ## self.slice is a list of tuples with entries
+        ## (index of image/seg pair (numbered image in dataset),
+        ##   slice index from 0 to data['image'].shape[0])
         self.slices = []
-
         for i, d in enumerate(data):
-            for j in range(d["image"].shape[0]):
+            for j in range(d['image'].shape[0]):
                 self.slices.append((i, j))
 
     def __getitem__(self, idx):
@@ -29,9 +30,10 @@ class SlicesDataset(Dataset):
         Returns:
             Dictionary of 2 Torch Tensors of dimensions [1, W, H]
         """
+        ## select a slice (2d image)
         slc = self.slices[idx]
         sample = dict()
-        sample["id"] = idx
+        sample['id'] = idx
 
         # You could implement caching strategy here if dataset is too large to fit
         # in memory entirely
@@ -48,7 +50,13 @@ class SlicesDataset(Dataset):
         # Hint2: You can use None notation like so: arr[None, :] to add size-1 
         # dimension to a Numpy array
         # <YOUR CODE GOES HERE>
-
+        # from a question try this:
+        ## select a slice of the image in the y, z plane and add a dimension in front ([None, :]):
+        img_slice = self.data[slc[0]]['image'][slc[1]][None, :]
+        sample['image'] = torch.from_numpy(img_slice)#.unsqueeze(0).cuda()
+        ## select a slice of the label in the y, z plane and add a dimension in front ([None, :]):
+        seg_slice = self.data[slc[0]]['seg'][slc[1]][None, :]
+        sample['seg'] = torch.from_numpy(seg_slice)#.long().cuda()
         return sample
 
     def __len__(self):
