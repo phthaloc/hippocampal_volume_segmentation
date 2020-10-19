@@ -1,16 +1,26 @@
-# Expected results
+### Section 2: Training a segmentation CNN
 
-Please put the artefacts from Section 2 here:  
-  
-* Functional code that trains the segmentation model
-* Test report with Dice scores on test set (can be json file). Your final average Dice with the default model should be around .90
-* Screenshots from your Tensorboard (or other visualization engine) output, showing Train and Validation loss plots, along with images of the predictions that your model is making at different stages of training
-* Your trained model PyTorch parameter file (model.pth)
+<img src="../readme.img/loss.png" width=400em>
 
-## Suggestions for making your project stand out
+You will perform this section in the same workspace as Section 1: **Workspace 1**. This workspace has a Python virtual environment called **medai** [TODO: how are we doing this?] which is set up with everything that you need to analyze inspect the dataset and prepare it for machine learning.
 
-* Can you write a 1-page email explaining what your algorithm is doing to a clinician who will be trying it out, but whom you never met? Make sure you include performance characteristics with some images. Try using their language and think of what would be the important information that they are looking for?
-* Implement additional metrics in the test report such as Jaccard score, sensitivity or specificity. Think of what additional metrics would be relevant.
-* In our dataset we have labels of 2 classes - anterior and posterior segments of the hippocampus. Can you train a version of model that segments the structure as a whole, only using one class? Is the performance better, the same or worse?
-* Write up a short report explaining requirements for your training process (compute, memory) and suggestions for making it more efficient (model architecture, data pipeline, loss functions, data augmentation). What kind of data augmentations would NOT add value?
-* What are best and worst performing volumes? Why do you think that's the case?
+In the directory called `section2/src` you will find the source code that forms the framework for your machine learning pipeline.
+
+You will be using [PyTorch](https://pytorch.org/) to train the model, similar to our Segmentation&Classification Lesson, and we will be using [Tensorboard](https://www.tensorflow.org/tensorboard/) to visualize the results.
+
+You will use the script `run_ml_pipeline.py` to kick off your training pipeline. You can do so right now! The script will not get far, though. It only contains the skeleton of the final solution and a lot of comments. You will need to follow the instructions inside the code files to complete the section and train your model. Same convention is used as in Section 1:
+
+* Comments that start with `# TASK` are tasks, instructions, or questions you **have** to complete
+* All other types of comments provide additional background, questions or contain suggestions to make your project stand out.
+
+You will need to complete all the instructional comments in the code in order to complete this section. You can do this in any order, but it makes most sense to start with the code in `run_ml_pipeline.py`.
+
+The code has hooks to log progress to Tensorboard. In order to see the Tensorboard output you need to launch Tensorboard executable from the same directory where `run_ml_pipeline.py` is located using the following command:
+
+> `tensorboard --logdir runs --bind_all`
+
+After that, Tensorboard will write logs into directory called `runs` and you will be able to view progress by opening the browser and navigating to default port 6006 of the machine where you are running it.
+
+#### Expected Outcome
+
+Navigate to the directory `section2/out` to find the [README.md](section2/out/README.md) with instructions on what is expected as the outcome.
