@@ -7,3 +7,5 @@ runs/
 results/
 data_all/
 submission
+.auctex-auto
+*.tex
