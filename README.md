@@ -173,3 +173,6 @@ This project is licensed under the MIT License
 [1] [www.sciencedirect.com/science/article/pii/S2213158219302542](https://www.sciencedirect.com/science/article/pii/S2213158219302542)  
 [2] [en.wikipedia.org/wiki/Hippocampus](https://en.wikipedia.org/wiki/Hippocampus)  
 [3] [medicaldecathlon.com/](http://medicaldecathlon.com/)
+
+
+*This project is part of the Udacity Nanodegree programm "AI in Healthcare" (November 2020).*
