@@ -61,7 +61,7 @@ For section 3 see sub-directory section3/ for more details.
 
 <img src="./readme.img/Slicer.png" width=400em>
 
-In the project directory called `section1` we will performa a exploratory data analysis (see file eda.ipynb). The goal is to inspect the dataset, understand the clinical side of the problem and get it ready for consumption by the ML algorithm in `section2`.
+In the project directory called `section1` we will perform an exploratory data analysis (see file eda.ipynb). The goal is to inspect the dataset, understand the clinical side of the problem and get it ready for consumption by the ML algorithm in `section2`.
 
 ### Section 2: Training a segmentation CNN
 
