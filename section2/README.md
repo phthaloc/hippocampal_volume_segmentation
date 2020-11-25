@@ -1,7 +1,5 @@
 ### Section 2: Training a segmentation CNN
 
-<img src="../readme.img/loss.png" width=800em>
-
 The directory called `section2/src` contains the source code that forms the framework for your machine learning pipeline.
 
 We use [PyTorch](https://pytorch.org/) to train the model and we use [Tensorboard](https://www.tensorflow.org/tensorboard/) to visualize the results.
@@ -13,3 +11,6 @@ The code has hooks to log progress to Tensorboard. In order to see the Tensorboa
 > `tensorboard --logdir runs --bind_all`
 
 After that, Tensorboard will write logs into directory called `runs` and you will be able to view progress by opening the browser and navigating to default port 6006 of the machine where you are running it.
+
+The following figure shows the tracking of the loss function during training of the ML model:
+<img src="../readme.img/loss.png" width=800em>
