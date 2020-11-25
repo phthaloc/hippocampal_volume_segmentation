@@ -86,16 +86,12 @@ The following figure shows the tracking of the loss function during training of 
 In `section3` we apply the results of the hippocampal segmentation algorithm in a clinical application simulation.
 A more detailed explanation is given directly in the `section3` sub-directory.
 
-Here we just want to display some prediction results of the U-Net CNN algorithm. 
+Here we just want to display some prediction results of the U-Net CNN algorithm which predicts the 3D segmentation map of the right hippocampus.
+This segmentation map can be easily transformed (by knowledge of the physical dimension units) into the anterior, posterior and total volume of the hippocampus. Some results are visualized
 
+<img src="./section3/screenshot_ohif_report_study1.png" width=700em>
 
-<img src="./readme.img/ohif.png" width=800em>
-
-
-<img src="./section3/screenshot_ohif_report_study1.png" width=800em>
-
- 
-
+<img src="./readme.img/ohif.png" width=700em>
 
 
 ## Project summary in form of a validation plan
