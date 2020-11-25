@@ -59,13 +59,12 @@ For section 3 see sub-directory section3/ for more details.
 
 ### Section 1: Curating a dataset of Brain MRIs
 
-<img src="./readme.img/Slicer.png" width=400em>
-
 In the project directory called `section1` we will perform an exploratory data analysis (see file eda.ipynb). The goal is to inspect the dataset, understand the clinical side of the problem and get it ready for consumption by the ML algorithm in `section2`.
 
-### Section 2: Training a segmentation CNN
+The following figure shows a sample image of a right hippocampus with overlayed segmentation:
+<img src="./readme.img/Slicer.png" width=800em>
 
-<img src="./readme.img/loss.png" width=400em>
+### Section 2: Training a segmentation CNN
 
 The directory called `section2/src` contains the source code that forms the framework for your machine learning pipeline.
 
@@ -78,6 +77,9 @@ The code has hooks to log progress to Tensorboard. In order to see the Tensorboa
 > `tensorboard --logdir runs --bind_all`
 
 After that, Tensorboard will write logs into directory called `runs` and you will be able to view progress by opening the browser and navigating to default port 6006 of the machine where you are running it.
+
+The following figure shows the tracking of the loss function during training of the ML model:
+<img src="./readme.img/loss.png" width=800em>
 
 ### Section 3: Integrating into a clinical network
 
