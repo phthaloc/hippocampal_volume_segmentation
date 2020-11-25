@@ -81,7 +81,7 @@ After that, Tensorboard will write logs into directory called `runs` and you wil
 The following figure shows the tracking of the loss function during training of the ML model:
 <img src="./readme.img/loss.png" width=800em>
 
-### Section 3: Integrating into a clinical network
+### Section 3: Integration into a clinical network
 
 In `section3` we apply the results of the hippocampal segmentation algorithm in a clinical application simulation.
 A more detailed explanation is given directly in the `section3` sub-directory.
