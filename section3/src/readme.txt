@@ -1,5 +1,5 @@
 How to run the clinical application simulation:
-    - in udacity workspace it could be that scripts in the deploy_scripts directory are not executable directly because of error "storescu: command not found". You have to copy the bash commands within these scripts and run them (in correct order) by hand in terminal.
+    - if scripts in the deploy_scripts directory are not executable directly because of error "storescu: command not found", copy the bash commands within these scripts and run them (in correct order) by hand in terminal.
 
 Steps for running the production environment:
 1. copy model weights file from section2/results/<specific_run_directory>/model.path to directory section3/src/
